@@ -69,7 +69,7 @@ const loginUser = async (req, res) => {
       { expiresIn: "60m" }
     );
 
-    res.cookie("token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production" }).json({
+    res.cookie("token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", maxAge: 30 * 24 * 60 * 60 * 1000 }).json({
       success: true,
       message: "Logged in successfully",
       user: {
@@ -160,7 +160,7 @@ const updateProfile = async (req, res) => {
       { expiresIn: "60m" }
     );
 
-    res.cookie("token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production" }).json({
+    res.cookie("token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", maxAge: 30 * 24 * 60 * 60 * 1000 }).json({
       success: true,
       message: "Profile updated successfully!",
       user: {

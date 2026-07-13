@@ -158,23 +158,26 @@ function AdminDashboard() {
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {featureImageList && featureImageList.length > 0 ? (
-              featureImageList.map((featureImgItem) => (
-                <Card key={featureImgItem._id} className="group overflow-hidden border-none shadow-sm relative h-[180px] rounded-2xl">
+              featureImageList.map((featureImgItem, index) => (
+                <Card key={featureImgItem._id || index} className="group overflow-hidden border-none shadow-sm relative h-[180px] rounded-2xl">
                   <img
                     src={featureImgItem.image}
                     alt="Active Carousel Slot"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <Button
-                      onClick={() => handleDeleteBanner(featureImgItem._id)}
-                      variant="destructive"
-                      size="icon"
-                      className="rounded-full w-10 h-10 shadow-lg scale-75 group-hover:scale-100 transition-transform duration-300"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    {featureImgItem._id && (
+                      <Button
+                        onClick={() => handleDeleteBanner(featureImgItem._id)}
+                        variant="destructive"
+                        size="icon"
+                        className="rounded-full w-10 h-10 shadow-lg scale-75 group-hover:scale-100 transition-transform duration-300"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )}
                   </div>
+
                   <div className="absolute bottom-3 left-3">
                      <span className="bg-white/10 backdrop-blur-md text-white text-[8px] uppercase tracking-widest px-2.5 py-1 rounded-full border border-white/20">Active Slot</span>
                   </div>

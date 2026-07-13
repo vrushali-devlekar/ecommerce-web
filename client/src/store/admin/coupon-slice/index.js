@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios from "../../../api/axiosInstance";
 
 const initialState = {
   isLoading: false,
@@ -10,7 +10,7 @@ export const addNewCoupon = createAsyncThunk(
   "/coupons/addNewCoupon",
   async (formData) => {
     const response = await axios.post(
-      "/api/shop/coupon/add",
+      "/api/admin/coupon/add",
       formData
     );
 
@@ -22,7 +22,7 @@ export const fetchAllCoupons = createAsyncThunk(
   "/coupons/fetchAllCoupons",
   async () => {
     const response = await axios.get(
-      "/api/shop/coupon/get"
+      "/api/admin/coupon/get"
     );
 
     return response.data;

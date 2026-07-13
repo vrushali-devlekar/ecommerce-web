@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios from "../../api/axiosInstance";
 
 const initialState = {
   isAuthenticated: false,
@@ -7,96 +7,59 @@ const initialState = {
   user: null,
 };
 
-function getLocalUserResponse() {
-  const user = localStorage.getItem("localUser");
-  if (user) {
-    return { success: true, user: JSON.parse(user) };
-  }
-  return { success: false, user: null };
-}
-
-function checkDummyLogin(formData) {
-  const { email, password } = formData;
-  let userPayload;
-  if (email === "admin@woodasa.com") {
-    userPayload = {
-      email: "admin@woodasa.com",
-      role: "admin",
-      id: "dummy-admin-id",
-      userName: "Admin User",
-      image: null,
-    };
-  } else {
-    userPayload = {
-      email: email || "user@woodasa.com",
-      role: "user",
-      id: "dummy-user-id",
-      userName: "Regular User",
-      image: null,
-    };
-  }
-  localStorage.setItem("localUser", JSON.stringify(userPayload));
-  return { success: true, user: userPayload };
-}
-
 export const registerUser = createAsyncThunk(
   "/auth/register",
-  async (formData) => {
+  async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/api/auth/register", formData, {
-        withCredentials: true,
-      });
-      return response.data;
+      const response = await axios.post("/api/auth/register", formData);
+      if (response?.data?.success) {
+        return response.data;
+      }
+      return rejectWithValue(response.data);
     } catch (error) {
-      console.warn("API error, registering user locally:", error);
-      return { success: true, message: "Local mock registration successful" };
+      return rejectWithValue(error.response?.data || { message: error.message });
     }
   }
 );
 
 export const loginUser = createAsyncThunk(
   "/auth/login",
-  async (formData) => {
+  async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/api/auth/login", formData, {
-        withCredentials: true,
-      });
-
+      const response = await axios.post("/api/auth/login", formData);
       if (response?.data?.success) {
         localStorage.setItem("localUser", JSON.stringify(response.data.user));
         return response.data;
       }
-      return checkDummyLogin(formData);
+      return rejectWithValue(response.data);
     } catch (error) {
-      console.warn("API error, checking dummy credentials:", error);
-      return checkDummyLogin(formData);
+      return rejectWithValue(error.response?.data || { message: error.message });
     }
   }
 );
 
 export const logoutUser = createAsyncThunk(
   "/auth/logout",
-  async () => {
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/api/auth/logout", {}, {
-        withCredentials: true,
-      });
-      localStorage.removeItem("localUser");
-      return response.data;
+      const response = await axios.post("/api/auth/logout", {});
+      if (response?.data?.success) {
+        localStorage.removeItem("localUser");
+        return response.data;
+      }
+      return rejectWithValue(response.data);
     } catch (error) {
-      console.warn("API error during logout, clearing local session:", error);
       localStorage.removeItem("localUser");
-      return { success: true };
+      return rejectWithValue(error.response?.data || { message: error.message });
     }
   }
 );
 
 export const checkAuth = createAsyncThunk(
   "/auth/checkauth",
-  async () => {
+  async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get("/api/auth/check-auth", {
-        withCredentials: true,
         headers: {
           "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
         },
@@ -106,54 +69,46 @@ export const checkAuth = createAsyncThunk(
         localStorage.setItem("localUser", JSON.stringify(response.data.user));
         return response.data;
       }
-      return getLocalUserResponse();
+      localStorage.removeItem("localUser");
+      return rejectWithValue(response.data);
     } catch (error) {
-      console.warn("API error, checking local session:", error);
-      return getLocalUserResponse();
+      localStorage.removeItem("localUser");
+      return rejectWithValue(error.response?.data || { message: error.message });
     }
   }
 );
 
 export const updateProfile = createAsyncThunk(
   "/auth/updateProfile",
-  async (formData) => {
+  async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.put("/api/auth/update-profile", formData, {
-        withCredentials: true,
-      });
-
+      const response = await axios.put("/api/auth/update-profile", formData);
       if (response?.data?.success) {
         localStorage.setItem("localUser", JSON.stringify(response.data.user));
         return response.data;
       }
-      const localUser = JSON.parse(localStorage.getItem("localUser") || "{}");
-      const updatedUser = { ...localUser, ...formData };
-      localStorage.setItem("localUser", JSON.stringify(updatedUser));
-      return { success: true, user: updatedUser };
+      return rejectWithValue(response.data);
     } catch (error) {
-      console.warn("API error, updating profile locally:", error);
-      const localUser = JSON.parse(localStorage.getItem("localUser") || "{}");
-      const updatedUser = { ...localUser, ...formData };
-      localStorage.setItem("localUser", JSON.stringify(updatedUser));
-      return { success: true, user: updatedUser };
+      return rejectWithValue(error.response?.data || { message: error.message });
     }
   }
 );
 
 export const updatePassword = createAsyncThunk(
   "/auth/updatePassword",
-  async (formData) => {
+  async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.put("/api/auth/update-password", formData, {
-        withCredentials: true,
-      });
-      return response.data;
+      const response = await axios.put("/api/auth/update-password", formData);
+      if (response?.data?.success) {
+        return response.data;
+      }
+      return rejectWithValue(response.data);
     } catch (error) {
-      console.warn("API error, updating password locally:", error);
-      return { success: true };
+      return rejectWithValue(error.response?.data || { message: error.message });
     }
   }
 );
+
 
 const authSlice = createSlice({
   name: "auth",
