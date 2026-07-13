@@ -20,7 +20,7 @@ function ShoppingCheckout() {
   
   const [currentSelectedAddress, setCurrentSelectedAddress] = useState(null);
   const [isPaymentStart, setIsPaymemntStart] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("razorpay");
+  const [paymentMethod, setPaymentMethod] = useState("cod");
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
   const [promoCode, setPromoCode] = useState("");
   const [isCouponApplied, setIsCouponApplied] = useState(false);
@@ -182,18 +182,17 @@ function ShoppingCheckout() {
                    2. Payment Selection
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <label className={`flex items-center justify-between p-6 border transition-all cursor-pointer ${paymentMethod === 'razorpay' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-border hover:border-zinc-500'}`}>
-                        <span className="font-bold uppercase tracking-widest text-xs">Razorpay / Card / UPI</span>
+                    {/* TODO: Razorpay frontend integration pending — see paymentController.js for expected flow */}
+                    <label className="flex items-center justify-between p-6 border border-zinc-200 bg-zinc-50 opacity-50 cursor-not-allowed">
+                        <span className="font-bold uppercase tracking-widest text-xs text-zinc-400">Razorpay / Card / UPI (Coming Soon)</span>
                         <input 
                             type="radio" 
                             name="paymentMethod" 
                             value="razorpay" 
-                            checked={paymentMethod === "razorpay"} 
-                            onChange={() => setPaymentMethod("razorpay")} 
+                            disabled
                             className="sr-only"
                         />
-                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'razorpay' ? 'border-primary' : 'border-muted'}`}>
-                             {paymentMethod === 'razorpay' && <div className="w-2 h-2 bg-primary rounded-full transition-all" />}
+                        <div className="w-4 h-4 rounded-full border-2 border-muted flex items-center justify-center">
                         </div>
                     </label>
                     <label className={`flex items-center justify-between p-6 border transition-all cursor-pointer ${paymentMethod === 'cod' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-border hover:border-zinc-500'}`}>

@@ -33,24 +33,12 @@ function AuthLogin() {
     });
   }
 
-  const handleDemoLogin = (role) => {
+  const handleDemoAutofill = (role) => {
     const demoData = role === "admin" 
-      ? { email: "admin@woodasa.com", password: "adminpassword" }
-      : { email: "user@woodasa.com", password: "userpassword" };
+      ? { email: "admin@admin.com", password: "admin1234" }
+      : { email: "newuser123@example.com", password: "password123" };
 
     setFormData(demoData);
-    dispatch(loginUser(demoData)).then((data) => {
-      if (data?.payload?.success) {
-        toast({
-          title: `Logged in as ${role === "admin" ? "Admin" : "User"} (Demo)`,
-        });
-      } else {
-        toast({
-          title: data?.payload?.message || "Login failed",
-          variant: "destructive",
-        });
-      }
-    });
   };
 
   return (
@@ -73,29 +61,31 @@ function AuthLogin() {
           onSubmit={onSubmit}
         />
 
-        <div className="mt-6 space-y-4">
-          <div className="relative flex py-2 items-center">
-            <div className="flex-grow border-t border-border"></div>
-            <span className="flex-shrink mx-4 text-xs uppercase tracking-widest text-muted-foreground font-semibold">Demo Accounts</span>
-            <div className="flex-grow border-t border-border"></div>
+        {import.meta.env.DEV && (
+          <div className="mt-6 space-y-4">
+            <div className="relative flex py-2 items-center">
+              <div className="flex-grow border-t border-border"></div>
+              <span className="flex-shrink mx-4 text-xs uppercase tracking-widest text-muted-foreground font-semibold">Demo Accounts</span>
+              <div className="flex-grow border-t border-border"></div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                onClick={() => handleDemoAutofill("admin")}
+                type="button"
+                className="py-2.5 px-4 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs tracking-wider rounded-lg uppercase transition-all shadow-sm hover:shadow"
+              >
+                Demo Admin
+              </button>
+              <button
+                onClick={() => handleDemoAutofill("user")}
+                type="button"
+                className="py-2.5 px-4 bg-[#d9a014] hover:bg-[#c49012] text-white font-bold text-xs tracking-wider rounded-lg uppercase transition-all shadow-sm hover:shadow"
+              >
+                Demo User
+              </button>
+            </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <button
-              onClick={() => handleDemoLogin("admin")}
-              type="button"
-              className="py-2.5 px-4 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs tracking-wider rounded-lg uppercase transition-all shadow-sm hover:shadow"
-            >
-              Demo Admin
-            </button>
-            <button
-              onClick={() => handleDemoLogin("user")}
-              type="button"
-              className="py-2.5 px-4 bg-[#d9a014] hover:bg-[#c49012] text-white font-bold text-xs tracking-wider rounded-lg uppercase transition-all shadow-sm hover:shadow"
-            >
-              Demo User
-            </button>
-          </div>
-        </div>
+        )}
         
         <div className="mt-8 pt-6 border-t border-gray-100 text-center">
           <p className="text-sm text-gray-500">
@@ -112,6 +102,7 @@ function AuthLogin() {
     </div>
   );
 }
+
 
 export default AuthLogin;
 

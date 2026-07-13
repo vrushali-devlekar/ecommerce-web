@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../../../api/axiosInstance";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { dummyProducts } from "../products-slice";
 
